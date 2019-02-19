@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="pgAgent,Postgres,pgAdmin," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="我的编译环境操作系统： Ubuntu 16.04 LTS ( 64 位) 数据库： Postgresql 9.5     pgAgent 源代码版本 :  4.0.0 shell  :   zsh 5.1.1 (x86_64-ubuntu-linux-gnu)   cmake version : 3.5.1">
+<meta name="keywords" content="pgAgent,Postgres,pgAdmin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 环境下编译以及安装 pgAgent 4.0.0">
+<meta property="og:url" content="http://yoursite.com/2019/02/19/compile-pgAgent4.0.0/index.html">
+<meta property="og:site_name" content="大白菜的博客">
+<meta property="og:description" content="我的编译环境操作系统： Ubuntu 16.04 LTS ( 64 位) 数据库： Postgresql 9.5     pgAgent 源代码版本 :  4.0.0 shell  :   zsh 5.1.1 (x86_64-ubuntu-linux-gnu)   cmake version : 3.5.1">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-02-19T17:08:40.904Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux 环境下编译以及安装 pgAgent 4.0.0">
+<meta name="twitter:description" content="我的编译环境操作系统： Ubuntu 16.04 LTS ( 64 位) 数据库： Postgresql 9.5     pgAgent 源代码版本 :  4.0.0 shell  :   zsh 5.1.1 (x86_64-ubuntu-linux-gnu)   cmake version : 3.5.1">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/19/compile-pgAgent4.0.0/"/>
+
+
+
+
+
+  <title>Linux 环境下编译以及安装 pgAgent 4.0.0 | 大白菜的博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">大白菜的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/19/compile-pgAgent4.0.0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="孙建荣">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大白菜的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Linux 环境下编译以及安装 pgAgent 4.0.0</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-02-19T22:53:13+08:00">
+                2019-02-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="我的编译环境"><a href="#我的编译环境" class="headerlink" title="我的编译环境"></a>我的编译环境</h2><p>操作系统： Ubuntu 16.04 LTS ( 64 位)</p>
+<p>数据库： Postgresql 9.5    </p>
+<p>pgAgent 源代码版本 :  4.0.0</p>
+<p>shell  :   zsh 5.1.1 (x86_64-ubuntu-linux-gnu) </p>
+<p> cmake version : 3.5.1</p>
+<a id="more"></a>
+<p>以下是源码里面提出的必须满足的环境：</p>
+<ul>
+<li>A C/C++ compiler, such as GCC or Microsoft Visual C++ on Windows.</li>
+<li>CMake 2.6  or higher installation</li>
+<li>A Boost library 1.41 or higher installation</li>
+<li>A PostgreSQL 8.3 or higher installation</li>
+</ul>
+<h2 id="需要了解的一些技能点"><a href="#需要了解的一些技能点" class="headerlink" title="需要了解的一些技能点"></a>需要了解的一些技能点</h2><ul>
+<li>Linux 系统基本的跳转指令</li>
+<li>wget ，tar ，sudo ，apt ，make ，vim 等命令的使用</li>
+<li>Linux 环境变量的含义以及如何去设置环境变量</li>
+<li>科学上网</li>
+</ul>
+<h2 id="pgAgent简介"><a href="#pgAgent简介" class="headerlink" title="pgAgent简介"></a>pgAgent简介</h2><p>​    简单的来说 pgAgent 就是 Postgres 数据库中一个任务调度代理工具，它能够运行多个步骤的任务或者是 shell 脚本亦或者是复杂的 SQL 任务。执行任务的时间是非常灵活的，类似于 LInux 下的 cron 表达式。 </p>
+<p>​    在 pgAdmin v1.9之前，它是集成在了 pgAdmin 中。从 1.9 版本以后是独立出来的，需要自己手动去安装以及配置。需要注意的是它类似于插件，只能在 pgAdmin 中进行使用。</p>
+<h2 id="编译环境准备"><a href="#编译环境准备" class="headerlink" title="编译环境准备"></a>编译环境准备</h2><h3 id="Postgresql-安装"><a href="#Postgresql-安装" class="headerlink" title="Postgresql 安装"></a>Postgresql 安装</h3><p>编译 pgAgent 必须在安装好数据库的前提下，务必先安装。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span># 不设定版本 Ubuntu 16 中会默认安装 PGSQL 9.5版本</span><br><span class="line">sudo apt-get install postgresql</span><br></pre></td></tr></table></figure>
+<h3 id="pgAgent-源码"><a href="#pgAgent-源码" class="headerlink" title="pgAgent 源码"></a>pgAgent 源码</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span># 下载 pgAgent 源码</span><br><span class="line">wget https://ftp.postgresql.org/pub/pgadmin/pgagent/pgAgent-4.0.0-Source.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span># 解压</span><br><span class="line">tar zxvf  pgAgent-4.0.0-Source.tar.gz</span><br></pre></td></tr></table></figure>
+<h3 id="cmake-安装"><a href="#cmake-安装" class="headerlink" title="cmake 安装"></a>cmake 安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">## 下载 cmake 源码 </span><br><span class="line">wget https://cmake.org/files/v3.5/cmake-3.5.1.tar.gz</span><br><span class="line"></span><br><span class="line">## 编译&amp;&amp;安装命令</span><br><span class="line">./bootstrap &amp;&amp; make &amp;&amp; make install</span><br><span class="line"></span><br><span class="line">## 验证是否成功安装</span><br><span class="line">cmake --version</span><br></pre></td></tr></table></figure>
+<h3 id="wxGTK-安装"><a href="#wxGTK-安装" class="headerlink" title="wxGTK 安装"></a>wxGTK 安装</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span># 下载 wxGTK 源码</span><br><span class="line">wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.2/wxWidgets-3.1.2.tar.bz2</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span># 解压</span><br><span class="line">tar xvjf wxWidgets-3.1.2.tar.bz2</span><br></pre></td></tr></table></figure>
+<p>接下来需要操作用户环境变量，我这里直接编辑的是系统环境变量文件，对所有用户都生效。在线上环境中不建议直接编辑此文件，可以编辑用户级别的环境变量文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/profile</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span># 如果上面命令没有权限请先提权</span><br><span class="line">sudo vim /etc/profile</span><br></pre></td></tr></table></figure>
+<p>往里面添加以下内容:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>set wx GTK</span><br><span class="line">PATH=$PATH:$HOME/bin:/usr/local/wxGTK-3.1.2/bin</span><br><span class="line">export LD_LIBRARY_PATH=/usr/local/wxGTK-3.1.2/lib:$LD_LIBRARY_PATH</span><br></pre></td></tr></table></figure>
+<p>然后执行生效命令:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source /etc/profile</span><br></pre></td></tr></table></figure>
+<p>接下来在编译以及安装:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./configure   --enable-shared=no --enable-unicode=yes --prefix=/usr/local/wxGTK-3.1.2</span><br></pre></td></tr></table></figure>
+<p>可能会出现的错误:</p>
+<ol>
+<li><p>缺少 gtk 库</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">configure: error: </span><br><span class="line">The development files for GTK+ were not found. For GTK+ 2, please</span><br><span class="line">ensure that pkg-config is in the path and that gtk+-2.0.pc is</span><br><span class="line">installed. For GTK+ 1.2 please check that gtk-config is in the path,</span><br><span class="line">and that the version is 1.2.3 or above. Also check that the</span><br><span class="line">libraries returned by 'pkg-config gtk+-2.0 --libs' or 'gtk-config</span><br><span class="line">--libs' are in the LD_LIBRARY_PATH or equivalent.</span><br></pre></td></tr></table></figure>
+<p>直接从仓库中安装:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install  libgtk2.0-dev</span><br></pre></td></tr></table></figure>
+<p>如果出现了以下相类似文字说明安装成功:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">Configured wxWidgets 3.1.2 for `x86_64-pc-linux-gnu'</span><br><span class="line"></span><br><span class="line">  Which GUI toolkit should wxWidgets use?                 GTK+ 2 with support for GTK+ printing</span><br><span class="line">  Should wxWidgets be compiled into single library?       no</span><br><span class="line">  Should wxWidgets be linked as a shared library?         no</span><br><span class="line">  Should wxWidgets support Unicode?                       yes (using wchar_t)</span><br><span class="line">  What level of wxWidgets compatibility should be enabled?</span><br><span class="line">                                       wxWidgets 2.8      no</span><br><span class="line">                                       wxWidgets 3.0      yes</span><br><span class="line">  Which libraries should wxWidgets use?</span><br><span class="line">                                       STL                no</span><br><span class="line">                                       jpeg               builtin</span><br><span class="line">                                       png                sys</span><br><span class="line">                                       regex              builtin</span><br><span class="line">                                       tiff               builtin</span><br><span class="line">                                       lzma               no</span><br><span class="line">                                       zlib               sys</span><br><span class="line">                                       expat              sys</span><br><span class="line">                                       libmspack          no</span><br><span class="line">                                       sdl                no</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>进入到 pgAgent 源码文件夹，然后执行以下命令:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmake ./</span><br></pre></td></tr></table></figure>
+<p>可能会碰到的错误:</p>
+<ol>
+<li><p>Boost library 库无法找到，报错可能类似于以下:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">CMake Error at cmake/FindBoost.cmake:2044 (message):</span><br><span class="line">  Unable to find the requested Boost libraries.</span><br><span class="line"></span><br><span class="line">  Unable to find the Boost header files.  Please set BOOST_ROOT to the root</span><br><span class="line">  directory containing Boost or BOOST_INCLUDEDIR to the directory containing</span><br><span class="line">  Boost's headers.</span><br><span class="line">Call Stack (most recent call first):</span><br><span class="line">  CMakeLists.txt:112 (FIND_PACKAGE)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">CMake Error at CMakeLists.txt:118 (MESSAGE):</span><br><span class="line">  Boost library not found.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">-- Configuring incomplete, errors occurred!</span><br></pre></td></tr></table></figure>
+<p>既然提示这么明显，那就直接安装，执行以下命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libboost-all-dev</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>找不到 Postgresql  安装位置，报错可能类似于以下:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CMake Error at cmake/FindPG.cmake:134 (MESSAGE):</span><br><span class="line">  No PostgreSQL installation could be found.</span><br><span class="line">Call Stack (most recent call first):</span><br><span class="line">  CMakeLists.txt:98 (FIND_PACKAGE)</span><br></pre></td></tr></table></figure>
+<p>这里就是需要配置 Postgresql 相关的环境变量了，依旧是编辑 /etc/profile 文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/profile</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span># 如果上面命令没有权限请先提权</span><br><span class="line">sudo vim /etc/profile</span><br></pre></td></tr></table></figure>
+<p>添加的内容格式为:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>set postgres</span><br><span class="line"><span class="meta">#</span># 这个是数据库安装目录,也就是带有 bin 目录的父文件夹，根据自己的情况修改</span><br><span class="line">export PGDIR=/usr/lib/postgresql/9.5</span><br><span class="line"><span class="meta">#</span># 这个是数据存放的文件夹，根据自己的情况修改</span><br><span class="line">export PGDATA=/var/lib/postgresql/9.5/main/data</span><br><span class="line"><span class="meta">#</span># 这个可以不用改</span><br><span class="line">export PATH=$PATH:$PGDIR/bin</span><br></pre></td></tr></table></figure>
+<p>生效命令:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source /etc/profile</span><br></pre></td></tr></table></figure>
+<p>上面这两个错是最常见的错误了，到此再次编译应该是可以通过编译，就绪执行安装命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">make </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> 安装</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+<p>出现以下类似文本时则为成功安装:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-- Install configuration: ""</span><br><span class="line">-- Installing: /usr/local/bin/pgagent</span><br><span class="line">-- Installing: /usr/local/share/pgagent.sql</span><br><span class="line">-- Installing: /usr/local/./README</span><br><span class="line">-- Installing: /usr/local/./LICENSE</span><br><span class="line">..........</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><ul>
+<li><p>文章中涉及 <code>apt install</code>类似的命令为 Debian 系统安装软件的命令，典型的派生Linux发行版 Ubuntu就是可以使用这个命令安装仓库上面的软件。类似于别的 Linux 发行版可以切换成相对应包管理工具进行安装，例如 Centos 可以使用 <code>yum install</code>达到同样的效果。</p>
+</li>
+<li><p>shell 如果跟我这里一样使用的是 zsh 的话，务必在每个终端打开时执行一次刷新环境命令。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> 这里刷新的可以是 /etc/profile ,也可以是 ～/.bash_profile 或者是  ～/.bashrc</span><br><span class="line"><span class="meta">#</span> 取决于你配置环境变量到底是配置在哪个文件里面</span><br><span class="line">source /etc/profile</span><br></pre></td></tr></table></figure>
+<p>这是因为使用了 zsh 后终端的启动行为被改变了，并不会去执行 <code>~/.bash_profile</code>、<code>~/.bashrc</code>等脚本了。我这边解决方式就是修改 zsh 的配置文件 <code>～/.zshrc</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">vim  ～/.zshrc</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span># 添加的文件内容</span><br><span class="line">	</span><br><span class="line">source /etc/profile</span><br><span class="line">source ～/.bash_profile</span><br><span class="line">source ～/.bashrc</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>网上很多博客上内容关于编译 pgAgent 的内容大多数是粘贴复制过来的，错误的地方太多了。尤其是配置 Postgresql 环境变量的配置方式更是错误。所以这里推荐的搜素资料倾向于优先查看官网的文档，然后再推荐搜索引擎。</p>
+</li>
+</ul>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>文章中也许会有表达不当的地方，如果发现文章中有什么问题发邮件指出。   </p>
+<p>email ：<a href="mailto:`sunybyjava@gmail.com" target="_blank" rel="noopener">`sunybyjava@gmail.com</a>`</p>
+<p><strong>感谢阅读！</strong></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/pgAgent/" rel="tag"># pgAgent</a>
+          
+            <a href="/tags/Postgres/" rel="tag"># Postgres</a>
+          
+            <a href="/tags/pgAdmin/" rel="tag"># pgAdmin</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/30/summaryOf2018/" rel="next" title="2018年终总结">
+                <i class="fa fa-chevron-left"></i> 2018年终总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">孙建荣</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#我的编译环境"><span class="nav-number">1.</span> <span class="nav-text">我的编译环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#需要了解的一些技能点"><span class="nav-number">2.</span> <span class="nav-text">需要了解的一些技能点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pgAgent简介"><span class="nav-number">3.</span> <span class="nav-text">pgAgent简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编译环境准备"><span class="nav-number">4.</span> <span class="nav-text">编译环境准备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Postgresql-安装"><span class="nav-number">4.1.</span> <span class="nav-text">Postgresql 安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pgAgent-源码"><span class="nav-number">4.2.</span> <span class="nav-text">pgAgent 源码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cmake-安装"><span class="nav-number">4.3.</span> <span class="nav-text">cmake 安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#wxGTK-安装"><span class="nav-number">4.4.</span> <span class="nav-text">wxGTK 安装</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编译"><span class="nav-number">5.</span> <span class="nav-text">编译</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注意事项"><span class="nav-number">6.</span> <span class="nav-text">注意事项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#写在最后"><span class="nav-number">7.</span> <span class="nav-text">写在最后</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">孙建荣</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
